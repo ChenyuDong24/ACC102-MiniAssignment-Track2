@@ -2,37 +2,28 @@
 import wrds
 import pandas as pd
 import matplotlib.pyplot as plt
-
 # 连接WRDS
 db = wrds.Connection(wrds_username='你的WRDS用户名')
-
 # 查询数据
 query = """
 SELECT tic, fyear, ni, sale, at
-FROM wrdsapps.sa0
+FROM comp.sa0  -- 把wrdsapps改成comp
 WHERE tic IN ('600690','000651','000333')
 AND fyear BETWEEN 2018 AND 2024
 ORDER BY tic, fyear
 """
-df = db.raw_sql(query)
-db.close()
-
 # 数据清洗
 df = df.dropna()
-
 # 计算财务指标
 df['profit_margin'] = df['ni'] / df['sale']
 df['roe'] = df['ni'] / df['at']
 df['asset_turnover'] = df['sale'] / df['at']
-
 # 公司名称
-df['company'] = df['tic'].map({
-    '600690':'Haier',
-    '000651':'Gree',
-    '000333':'Midea'
+df['company'] = df['tic'].map({    
+'600690':'Haier',    
+'000651':'Gree',    
+'000333':'Midea'
 })
-
 # 导出Excel
 df.to_excel('home_appliance_financials.xlsx', index=False)
-
 print("✅ 代码运行完成！")
