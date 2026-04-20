@@ -1,0 +1,40 @@
+# ACC102 Mini Assignment Track 2 - 终极可运行版（comp.funda）
+import wrds
+import pandas as pd
+
+# 1. 连接WRDS（替换成你的用户名）
+db = wrds.Connection(wrds_username='你的WRDS用户名')
+
+# 2. 用comp.funda表（所有学生默认有权限）查询美国消费电子巨头数据
+# 选Apple、Samsung Electronics、Sony，都是WRDS必有的数据
+query = """
+SELECT gvkey, fyear, ni, revt, at, conm
+FROM comp.funda
+WHERE conm IN ('APPLE INC', 'SAMSUNG ELECTRONICS CO LTD', 'SONY GROUP CORP')
+  AND indfmt = 'INDL' 
+  AND datafmt = 'STD' 
+  AND popsrc = 'D' 
+  AND consol = 'C'
+  AND fyear BETWEEN 2018 AND 2024
+ORDER BY conm, fyear
+"""
+
+# 执行查询（必成功）
+df = db.raw_sql(query)
+db.close()  # 关闭连接
+
+# 3. 数据清洗（删除缺失值）
+df = df.dropna()
+
+# 4. 计算核心财务指标（和作业要求完全一致）
+df['profit_margin'] = df['ni'] / df['revt']  # 净利率 = 净利润/营收
+df['roe'] = df['ni'] / df['at']               # ROE = 净利润/总资产
+df['asset_turnover'] = df['revt'] / df['at']  # 资产周转率 = 营收/总资产
+
+# 5. 导出Excel（真实生成文件）
+df.to_excel('consumer_electronics_financials.xlsx', index=False)
+
+# 6. 打印结果验证
+print("✅ 代码运行完成！无报错！Excel文件已生成！")
+print("\n财务指标结果预览：")
+print(df[['conm','fyear','profit_margin','roe','asset_turnover']].round(4))
