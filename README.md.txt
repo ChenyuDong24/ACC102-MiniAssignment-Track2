@@ -30,7 +30,7 @@ Target users: Finance students, investors, industry analysts.
 ## 5. How to Run
 1. Install required packages:
    pip install wrds pandas openpyxl
-2. Replace "你的WRDS用户名" with your actual WRDS username
+2. Replace "your WRDS username" with your actual WRDS username
 3. Run the notebook (no errors guaranteed)
 
 ## 6. Demo Video
